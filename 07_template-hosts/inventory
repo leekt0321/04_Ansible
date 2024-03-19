@@ -1,0 +1,12 @@
+[webservers]
+ansible1.example.com ansible_ssh_host=192.168.10.11
+ansible2.example.com ansible_ssh_host=192.168.10.12
+ansible3.example.com ansible_ssh_host=192.168.10.13
+ansible4.example.com ansible_ssh_host=192.168.10.14
+
+# inventory 파일 변수 정의 방법
+# * 호스트 변수에 정의
+# 1. ansible.example.com VAR=VALUE
+# * 호스트 그룹에 정의
+# 2. [webservers:vars]
+#     VAR=VARLUE

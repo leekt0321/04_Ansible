@@ -1,0 +1,21 @@
+---
+- name: Task Failure Exercise
+  hosts: databases
+  vars:
+    web_package: httpd
+    db_package: mariadb-server
+    db_service: mariadb
+  tasks:
+    - name: db 서비스 다운
+      service:
+        name: "{{ db_service }}"
+        state: stopped
+    - name: 웹 패키지 삭제
+      yum:
+        name: "{{ web_package }}"
+        state: absent
+
+    - name: db 패키지 삭제
+      yum:
+        name: "{{ db_package }}"
+        state: absent

@@ -1,0 +1,32 @@
+---
+- name: DB 삭제 작업
+  hosts: all
+  gather_facts: yes
+  vars:
+    db_packages:
+      - mariadb-server
+      - python3-PyMySQL
+    db_config_url: http://192.168.10.10
+    db_config_src_path_small: "{{ db_config_url }}/my.cnf.small"
+    db_config_src_path_large: "{{ db_config_url }}/my.cnf.large"
+    db_config_path: /etc/my.cnf
+    db_service: mariadb
+  tasks:
+  - name: 설정 파일 삭제(/etc/motd)
+    file:
+      path: /etc/motd
+      state: absent
+  - name: 설정 파일 삭제(/etc/my.cnf)
+    file:
+      path: "{{ db_config_path }}"
+      state: absent
+  - name: 서비스 내리기
+    service:
+      name: mariadb
+      state: stopped
+
+  - name: 패키지 삭제
+    yum:
+      name: "{{ item }}"
+      state: absent
+    with_items: "{{ db_packages }}"

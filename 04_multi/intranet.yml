@@ -1,0 +1,63 @@
+---
+# Play1 - web1
+# 1) package install - httpd, mod_ssl, firewalld
+# 2) web service configure - /var/www/html/index.html
+# 3) service started - httpd, firewalld
+# 4) firewalld startwd - http, https
+
+# Play2 localhost
+# 1) web check - curl http://web1.example.com
+
+- name: enable intranet service
+  hosts: web1
+  # become: yes
+  tasks:
+  - name: 1) package install - httpd, mod_ssl, firewalld
+    yum:
+      name:
+        - httpd
+        - firewalld
+        - mod_ssl
+      state: latest
+  
+  - name: 2) web service configure - /var/www/html/index.html
+    copy:
+      content:
+        <html>
+        <h1><center>web1.example.com</center></h1>
+        </html>
+      dest: /var/www/html/index.html
+  
+  - name: 3) service started - httpd, firewalld
+    service:
+      name: "{{ item  }}"
+      state: started
+      enabled: yes
+    loop:
+      - httpd
+      - firewalld
+  
+  - name: 4) firewall configure - http(80/tcp), https(443/tcp)
+    firewalld:
+      #service: "{{ item }}"
+      port: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+
+    loop:
+      - 80/tcp
+      - 443/tcp
+      # - http
+      # - https
+
+# Play2 - localhost
+- name: web
+  hosts: localhost
+  become: no
+  tasks:
+  - name: 1) web check - curl http://web1.example.com
+    uri:
+      url: http://web1
+      return_content: true
+      status_code: 200

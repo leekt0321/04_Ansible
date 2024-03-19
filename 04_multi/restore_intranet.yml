@@ -1,0 +1,35 @@
+---
+# 1) firewall service off - http(80/tcp), https(443/tcp) => firewalld
+# 2) service off - httpd => service
+# 3) service configure remove - /var/www/html/index.hyml => file
+# 4) package remove - httpd, mod_ssl => yum
+
+- name: remove and stop
+  hosts: web1
+  tasks:
+  - name: 1) firewall service off - http, https
+    firewalld:
+      service: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: disabled
+    loop:
+      - http
+      - https
+  - name: 2) service off - http => service
+    service:
+      name: httpd
+      state: stopped
+      enabled: false
+  
+  - name: 3) service configure remove - /var/www/html/index.html
+    file:
+      path: /var/www/html/index.html
+      state: absent
+
+  - name: 4) package remove - httpd, mod_ssl
+    yum:
+      name:
+        - httpd
+        - mod_ssl
+      state: absent

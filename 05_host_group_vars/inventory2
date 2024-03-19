@@ -1,0 +1,5 @@
+[packages]
+httpd
+php
+mariadb-server
+mutt
